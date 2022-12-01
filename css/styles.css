@@ -1,11 +1,12 @@
-* {
-	margin: 0;
-	padding: 0;
+*,
+*::after,
+*::before {
 	box-sizing: border-box;
-	text-transform: capitalize;
-	font-family: Verdana, Geneva, Tahoma, sans-serif;
-	background-color: #000;
-	color: white;
+}
+
+:root {
+	--handle-size: 3rem;
+	--img-gap: 0.25rem;
 }
 
 /* Hide the scrollbar and still be able to scroll  */
@@ -13,55 +14,44 @@ body::-webkit-scrollbar {
 	display: none;
 }
 
+body {
+	margin: 0;
+}
+
 .container {
-	position: relative;
-	min-height: 100vh;
-}
-
-h1 {
-	color: #fff;
-	font-size: 16px;
-	font-weight: bold;
-	text-align: center;
-	padding: 10px 20px;
-}
-
-.container .video-container {
 	display: flex;
-	/* flex-wrap: wrap; */
-	width: 700%;
-	gap: 15px;
 	justify-content: center;
-	padding: 10px;
+	overflow: hidden;
+	margin-bottom: 5px;
 }
 
-.container .video-container .video {
+.slider {
+	--items-per-screen: 6;
+	--slider-index: 0;
+	display: flex;
+	flex-grow: 1;
+	margin: 0 var(--img-gap);
+	transform: translateX(calc(var(--slider-index) * -100%));
+	transition: transform 250ms ease-in-out;
+}
+
+.slider > .videos {
+	flex: 0 0 calc(100% / var(--items-per-screen));
+	max-width: calc(100% / var(--items-per-screen));
+	aspect-ratio: 16 / 9;
+	padding: var(--img-gap);
+	border-radius: 1rem;
+}
+
+.videos {
 	height: 150px;
-	width: 230px;
+	width: 20px;
 	border-radius: 5px;
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
 	cursor: pointer;
 	overflow: hidden;
 }
 
-.container .video-container .videos {
-	height: 150px;
-	width: 70px;
-	border-radius: 5px;
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
-	cursor: pointer;
-	overflow: hidden;
-}
-
-.container .video-container .video video {
-	height: 85%;
-	width: 100%;
-	object-fit: cover;
-	transition: 0.2s linear;
-	border-radius: 10px;
-}
-
-.container .video-container .videos video {
+video {
 	height: 80%;
 	width: 100%;
 	object-fit: cover;
@@ -69,15 +59,113 @@ h1 {
 	border-radius: 10px;
 }
 
-.container .video-container .video:hover video {
+.videos:hover video {
 	transform: scale(1.1);
 }
 
-.container .video-container .video:hover video {
-	transform: scale(1.1);
+.handle {
+	border: none;
+	border-radius: 1rem;
+	flex-grow: 0;
+	flex-shrink: 0;
+	background-color: rgba(255, 255, 255, 0.25);
+	z-index: 10;
+	margin: var(--img-gap) 0;
+	width: var(--handle-size);
+	cursor: pointer;
+	font-size: 5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	line-height: 0;
+	transition: background-color 150ms ease-in-out;
 }
 
-.container .popup-video {
+.left-handle {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	display: none;
+}
+
+.right-handle {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	display: none;
+}
+
+.container:hover .left-handle,
+.container:hover .right-handle {
+	display: block;
+}
+
+.handle:hover,
+.handle:focus {
+	background-color: rgba(255, 255, 255, 0.5);
+}
+
+.text {
+	transition: transform 150ms ease-in-out;
+}
+
+.handle:hover .text,
+.handle:focus .text {
+	transform: scale(1.2);
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	padding: 0.5rem calc(var(--img-gap) * 2 + var(--handle-size));
+	align-items: center;
+}
+
+.title {
+	font-size: 2rem;
+	margin: 0;
+}
+
+.progress-bar {
+	display: flex;
+	gap: 0.25rem;
+}
+
+.progress-item {
+	flex: 0 0 1.5rem;
+	min-width: 1.5rem;
+	height: 0.5rem;
+	background-color: rgba(255, 255, 255, 0.5);
+}
+
+.progress-item.active {
+	background-color: rgba(255, 255, 255, 0.9);
+}
+
+@media (max-width: 1000px) {
+	.slider {
+		--items-per-screen: 3;
+	}
+}
+
+@media (max-width: 500px) {
+	.slider {
+		--items-per-screen: 2;
+	}
+}
+
+body {
+	background-color: black;
+	color: white;
+}
+
+.v-body {
+	text-align: center;
+	font-size: 12px;
+}
+
+/* Popup video  */
+
+.popup-video {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -88,7 +176,7 @@ h1 {
 	display: none;
 }
 
-.container .popup-video video {
+.popup-video video {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -99,7 +187,7 @@ h1 {
 	object-fit: cover;
 }
 
-.container .popup-video span {
+.popup-video span {
 	position: absolute;
 	top: 20px;
 	right: 3%;
@@ -117,20 +205,7 @@ h1 {
 	vertical-align: middle;
 }
 
-.container .popup-video span:hover {
+.popup-video span:hover {
 	transform: scale(1.4);
 	background-color: rgba(0, 0, 0, 1);
-}
-
-@media (max-width: 768px) {
-	.container .popup-video video {
-		width: 95%;
-	}
-}
-
-/* Further development  */
-
-.v-body {
-	padding: 5px;
-	font-size: 10px;
 }
